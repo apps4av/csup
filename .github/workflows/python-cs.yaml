@@ -35,15 +35,15 @@ jobs:
       with:
         name: CS
         path: |
-          CS_AK.zip
-          CS_PAC.zip
-          CS_NW.zip
-          CS_SW.zip
-          CS_NC.zip
-          CS_EC.zip
-          CS_SC.zip
-          CS_NE.zip
-          CS_SE.zip
+          AK_CS.zip
+          PAC_CS.zip
+          NW_CS.zip
+          SW_CS.zip
+          NC_CS.zip
+          EC_CS.zip
+          SC_CS.zip
+          NE_CS.zip
+          SE_CS.zip
           
     - name: SSH to mamba
       uses: appleboy/scp-action@v0.1.7
@@ -52,5 +52,5 @@ jobs:
         username: apps4av
         password: ${{ secrets.MAMBA_PASSWORD }}
         port: 22
-        source: "CS_AK.zip,CS_PAC.zip,CS_NW.zip,CS_SW.zip,CS_NC.zip,CS_EC.zip,CS_SC.zip,CS_NE.zip,CS_SE.zip"
+        source: "AK_CS.zip,PAC_CS.zip,NW_CS.zip,SW_CS.zip,NC_CS.zip,EC_CS.zip,SC_CS.zip,NE_CS.zip,SE_CS.zip"
         target: /home/apps4av/mamba.dreamhosters.com/new/staging

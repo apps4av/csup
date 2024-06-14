@@ -10,6 +10,7 @@ import xml.etree.ElementTree as et
 import concurrent.futures
 import cycle
 
+
 states_in_regions = {
     "AK":  ["AK",],
     "PAC": ["HI", "XX"],
@@ -125,14 +126,14 @@ def zip_dcs():
 
     for region in regions:
         try:
-            os.remove("CS_" + region + ".zip")
-            os.remove("CS_" + region)
+            os.remove(region + "_CS" + ".zip")
+            os.remove(region + "_CS")
         except FileNotFoundError as e:
             pass
 
     for region in regions:
-        zip_files.append(zipfile.ZipFile("CS_" + region + ".zip", "w"))
-        manifest_files.append(open("CS_" + region, "w+"))
+        zip_files.append(zipfile.ZipFile(region + "_CS" + ".zip", "w"))
+        manifest_files.append(open(region + "_CS", "w+"))
 
     for ff in manifest_files:
         ff.write(cycle.get_cycle() + "\n")
@@ -147,6 +148,6 @@ def zip_dcs():
         ff.close()
 
     for count in range(len(regions)):
-        zip_files[count].write("CS_" + regions[count])
+        zip_files[count].write(regions[count] + "_CS")
         zip_files[count].close()
 
