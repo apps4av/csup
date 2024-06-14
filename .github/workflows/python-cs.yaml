@@ -1,0 +1,46 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: CS
+
+on:
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.12"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        sudo apt-get install imagemagick ghostscript exiftool gdal-bin python3-gdal
+        pip install bs4 tqdm numpy regex urllib3 glob2 elementpath pypdf
+    - name: Build CS
+      run: |
+        python3 cs.py
+
+    - name: Upload release
+      uses: actions/upload-artifact@v4
+      with:
+        name: CS
+        path: |
+          CS_AK.zip
+          CS_PAC.zip
+          CS_NW.zip
+          CS_SW.zip
+          CS_NC.zip
+          CS_EC.zip
+          CS_SC.zip
+          CS_NE.zip
+          CS_SE.zip
