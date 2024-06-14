@@ -65,7 +65,7 @@ def call_perl_script(script):
     check_call(["perl" + " " + script + ".pl > " + script + ".csv"], shell=True)
 
 
-def read_dcs_xml():
+def read_csup_xml():
     xml_file = glob.glob("afd_*.xml")[0]
     tree = et.parse(xml_file)
     root = tree.getroot()
@@ -74,7 +74,7 @@ def read_dcs_xml():
     return airport_elements
 
 
-def process_dcs(airport):
+def process_csup(airport):
     apt_id = airport.find('aptid').text
     pages = airport.find('pages')
     pdfs = pages.findall('pdf')
@@ -91,14 +91,14 @@ def process_dcs(airport):
         fn = pdf.text.upper()
 
         tokens = fn.split("_")
-        base = ("CS-" + tokens[0]).upper()  # add region to name
+        base = ("CSUP-" + tokens[0]).upper()  # add region to name
 
         cmd = f'mogrify -trim +repage -dither none -antialias -density 225 -depth 8 -background white  -alpha remove -alpha off -colors 15 -format png -quality 100 -write {apt_dir}/{base}_{page}.png {fn}'
         call_script(cmd)
         page = page + 1
 
 
-def make_dcs():
+def make_csup():
     os.makedirs("afd", exist_ok=True)
 
     # make all files upper case, FAA mixes cases
@@ -106,19 +106,19 @@ def make_dcs():
     for file in files:
         os.rename(file, file.upper())
 
-    airports = read_dcs_xml()
+    airports = read_csup_xml()
 
     # submit 8 jobs at a time
     sub_lists = [airports[i:i + 8] for i in range(0, len(airports), 8)]
 
-    for sublist in tqdm(sub_lists, desc="Processing DCS"):
+    for sublist in tqdm(sub_lists, desc="Processing CSUP"):
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            futures = [executor.submit(process_dcs, elem) for elem in sublist]
+            futures = [executor.submit(process_csup, elem) for elem in sublist]
             # Collect the results
             [future.result() for future in concurrent.futures.as_completed(futures)]
 
 
-def zip_dcs():
+def zip_csup():
     # US geo regions
     regions = list(states_in_regions.keys())
     zip_files = []
@@ -126,21 +126,21 @@ def zip_dcs():
 
     for region in regions:
         try:
-            os.remove(region + "_CS" + ".zip")
-            os.remove(region + "_CS")
+            os.remove(region + "_CSUP" + ".zip")
+            os.remove(region + "_CSUP")
         except FileNotFoundError as e:
             pass
 
     for region in regions:
-        zip_files.append(zipfile.ZipFile(region + "_CS" + ".zip", "w"))
-        manifest_files.append(open(region + "_CS", "w+"))
+        zip_files.append(zipfile.ZipFile(region + "_CSUP" + ".zip", "w"))
+        manifest_files.append(open(region + "_CSUP", "w+"))
 
     for ff in manifest_files:
         ff.write(cycle.get_cycle() + "\n")
 
     for count in range(len(regions)):
-        file_list = glob.glob("*/CS-" + regions[count] + "_*", root_dir="afd/", recursive=True)
-        for ff in tqdm(file_list, desc="Zipping CS-" + regions[count]):
+        file_list = glob.glob("*/CSUP-" + regions[count] + "_*", root_dir="afd/", recursive=True)
+        for ff in tqdm(file_list, desc="Zipping CSUP-" + regions[count]):
             zip_files[count].write("afd/" + ff)
             manifest_files[count].write("afd/" + ff + "\n")
 
@@ -148,6 +148,6 @@ def zip_dcs():
         ff.close()
 
     for count in range(len(regions)):
-        zip_files[count].write(regions[count] + "_CS")
+        zip_files[count].write(regions[count] + "_CSUP")
         zip_files[count].close()
 

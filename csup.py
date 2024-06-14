@@ -9,5 +9,5 @@ all_charts = common.list_crawl("https://www.faa.gov/air_traffic/flight_info/aero
 common.download_list(all_charts)
 
 # Do DCS
-common.make_dcs()
-common.zip_dcs()
+common.make_csup()
+common.zip_csup()

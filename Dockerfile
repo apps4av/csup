@@ -9,4 +9,4 @@ WORKDIR /tmp/
 COPY *.py /tmp/
 RUN ls /tmp/
 
-CMD ["python3", "dcs.py"]
+CMD ["python3", "csup.py"]
