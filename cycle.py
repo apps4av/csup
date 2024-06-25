@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta
 
 
+
 def get_cycle():
-    return "2407" 
+    return "2407"
 
 
 def get_cycle_download():
