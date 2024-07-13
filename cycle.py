@@ -2,11 +2,15 @@ from datetime import datetime, timedelta
 
 
 def get_cycle():
-    return "2407"
+    te, fs = calculate_cycle(1)
+    print("Cycle to be put in manifest is " + str(te))
+    return str(te)
 
 
 def get_cycle_download():
-    return "2407"
+    te, fs = calculate_cycle(1)
+    print("Cycle to be downloaded is " + str(fs))
+    return str(fs)
 
 
 def get_first_date(year):
