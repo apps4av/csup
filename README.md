@@ -1,3 +1,5 @@
+Updates every 56 days.
+
 # CSUP
 FAA Chart Suppliments 
 
