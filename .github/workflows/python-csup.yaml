@@ -47,6 +47,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        sudo rm -rf /var/lib/apt/lists/*
+        sudo apt-get update
         sudo apt-get install imagemagick ghostscript exiftool gdal-bin python3-gdal
         pip install bs4 tqdm numpy regex urllib3 glob2 elementpath pypdf
     - name: Build CSUP 
