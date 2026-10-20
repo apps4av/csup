@@ -118,7 +118,20 @@ def make_csup():
             [future.result() for future in concurrent.futures.as_completed(futures)]
 
 
-def zip_csup():
+def _cover_pdf_source(region, edition):
+    """Local path of the downloaded cover-to-cover PDF (``CS_AK_20261029.pdf``).
+
+    ``make_csup`` uppercases every ``*.pdf`` in the work directory, so accept
+    either case.
+    """
+    name = "CS_{0}_{1}.pdf".format(region, edition)
+    for candidate in (name, name.upper()):
+        if os.path.isfile(candidate):
+            return candidate
+    raise FileNotFoundError("Missing cover-to-cover Chart Supplement PDF: " + name)
+
+
+def zip_csup(edition):
     # US geo regions
     regions = list(states_in_regions.keys())
     zip_files = []
@@ -139,10 +152,17 @@ def zip_csup():
         ff.write(cycle.get_cycle() + "\n")
 
     for count in range(len(regions)):
-        file_list = glob.glob("*/CSUP-" + regions[count] + "_*", root_dir="afd/", recursive=True)
-        for ff in tqdm(file_list, desc="Zipping CSUP-" + regions[count]):
+        region = regions[count]
+        file_list = glob.glob("*/CSUP-" + region + "_*", root_dir="afd/", recursive=True)
+        for ff in tqdm(file_list, desc="Zipping CSUP-" + region):
             zip_files[count].write("afd/" + ff)
             manifest_files[count].write("afd/" + ff + "\n")
+
+        # Complete regional PDF at the zip root (AK_CSUP.pdf), not under afd/.
+        # Documents lists PDFs in the app data root only.
+        cover_name = region + "_CSUP.pdf"
+        zip_files[count].write(_cover_pdf_source(region, edition), arcname=cover_name)
+        manifest_files[count].write(cover_name + "\n")
 
     for ff in manifest_files:
         ff.close()
